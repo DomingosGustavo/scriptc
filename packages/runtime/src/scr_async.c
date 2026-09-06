@@ -81,10 +81,18 @@ void __sanitizer_finish_switch_fiber(void *fake_stack_save, const void **bottom_
  * generateText — zod parses inside promise chains) nests dozens of engine
  * frames; the memory is malloc'd and committed lazily, so idle fibers pay
  * address space, not RSS. */
+#ifndef SCR_FIBER_STACK
 #ifdef SCR_ASAN_FIBERS
 #define SCR_FIBER_STACK (8 * 1024 * 1024)
 #else
-#define SCR_FIBER_STACK (256 * 1024)
+/* 2MB (was 256KB): island code entered from a fiber — e.g. a transpiler's
+ * recursive-descent parser run from an async host action — needs a deeper
+ * engine stack than the original budget allowed. The memory is malloc'd
+ * and committed lazily, so idle fibers still pay address space, not RSS.
+ * Overridable with -DSCR_FIBER_STACK=... (keep scr_island.c's budget at
+ * half of it). */
+#define SCR_FIBER_STACK (2 * 1024 * 1024)
+#endif
 #endif
 
 /* ── promises ─────────────────────────────────────────────────────────── */

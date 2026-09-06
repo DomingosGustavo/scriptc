@@ -75,7 +75,8 @@
 #endif
 #endif
 #ifndef SCR_ISLAND_STACK_BUDGET
-#define SCR_ISLAND_STACK_BUDGET (128 * 1024)
+/* half of scr_async.c's 2MB SCR_FIBER_STACK */
+#define SCR_ISLAND_STACK_BUDGET (1024 * 1024)
 #endif
 #define ISL_STACK_BUDGET SCR_ISLAND_STACK_BUDGET
 
